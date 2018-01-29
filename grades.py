@@ -40,7 +40,7 @@ class Analisys (threading.Thread):
 
         self.driver.quit()
         return False
-        
+
     def run(self):
         semaphore.acquire()
         partial(self.db, self.url, self.user, self.password)
@@ -80,8 +80,9 @@ def add_user(db, number, password, password_cipher, email, url):
     try:
         cursor.execute(sql, (number, str(password_cipher), email))
         db.commit()
-    except:                
+    except DatabaseError as e:
         db.rollback()
+        print(e)
 
     return True
 

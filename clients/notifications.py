@@ -55,7 +55,7 @@ class Notification:
             smtpObj.ehlo()
             smtpObj.starttls()
             smtpObj.login(cfg['stmp']['username'], cfg['stmp']['password'])
-            smtpObj.sendmail(msg['From'], msg['To'], msg.as_string())         
+            smtpObj.sendmail(msg['From'], msg['To'], msg.as_string())
         except SMTPException as e:
             with open('email.log', 'a') as out:
                 out.write(e)

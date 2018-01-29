@@ -1,4 +1,3 @@
-from selenium.webdriver.support import ui
 from clients.notifications import Notification
 from helpers import wait_until_page_is_loaded
 from pymysql import DatabaseError
@@ -20,7 +19,7 @@ def definitive(db, data, driver):
 
     driver.get('https://portal.ufp.pt/Notas/Recente.aspx')
     wait_until_page_is_loaded(driver)
-    
+
     table = driver.find_elements_by_xpath('//*[@id="ctl00_ContentPlaceHolder1_AccordionPane1_content_GridView1"]/tbody/tr')
 
     if len(table) == 0:
@@ -45,3 +44,4 @@ def definitive(db, data, driver):
                     notifier.definitive(unidade, nota)
             except DatabaseError as e:
                 db.rollback()
+                print(e)

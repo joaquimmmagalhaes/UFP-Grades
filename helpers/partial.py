@@ -33,7 +33,7 @@ def partial(db, url, data, password):
             sys.exit(1)
 
         grades = requests.get(url + "grades/detailed", token_json)
-    
+
     all_grades = grades.json()["message"]["2017/18"]
     cursor = db.cursor()
     cursor.execute("SELECT * FROM partial_grades WHERE user_id=%s", (str(data[0])))
@@ -56,3 +56,4 @@ def partial(db, url, data, password):
                         notifier.partial(details["unidade"], details["elemento"], details["nota"])
                 except DatabaseError as e:
                     db.rollback()
+                    print(e)

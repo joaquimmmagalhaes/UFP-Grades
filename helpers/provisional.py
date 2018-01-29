@@ -1,4 +1,3 @@
-from selenium.webdriver.common.keys import Keys
 from clients.notifications import Notification
 from helpers import wait_until_page_is_loaded
 from pymysql import DatabaseError

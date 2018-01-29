@@ -1,8 +1,6 @@
-import pymysql, sys, yaml
-
 def create_database(db, cfg, cipher):
     print("Creating database and tables...")
-    
+
     cursor = db.cursor()
     sql = 'CREATE DATABASE ' + cfg['mysql']['db']
     cursor.execute(sql)

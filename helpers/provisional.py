@@ -13,10 +13,6 @@ def provisional(db, data, driver):
     cursor.execute("SELECT * FROM provisional WHERE user_id=%s", (str(data[0])))
     all_db_grades = cursor.fetchall()
 
-    first_usage = False
-    if len(all_db_grades) == 0:
-        first_usage = True
-
     driver.get('https://portal.ufp.pt/Notas/FinalProv.aspx')
     wait_until_page_is_loaded(driver)
 
@@ -40,8 +36,10 @@ def provisional(db, data, driver):
             try:
                 cursor.execute(sql, (data[0], unidade, epoca, ex_oral, ex_escrito, nota, consula, data_oral))
                 db.commit()
-                if first_usage is False:
+
+                if data[5] is 0:
                     notifier.provisional(unidade, epoca, ex_oral, ex_escrito, nota, consula, data_oral)
+
             except DatabaseError as e:
                 db.rollback()
                 print(e)

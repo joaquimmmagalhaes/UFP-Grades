@@ -13,10 +13,6 @@ def definitive(db, data, driver):
     cursor.execute("SELECT * FROM recent_definitive WHERE user_id=%s", (str(data[0])))
     all_db_grades = cursor.fetchall()
 
-    first_usage = False
-    if len(all_db_grades) == 0:
-        first_usage = True
-
     driver.get('https://portal.ufp.pt/Notas/Recente.aspx')
     wait_until_page_is_loaded(driver)
 
@@ -40,8 +36,10 @@ def definitive(db, data, driver):
             try:
                 cursor.execute(sql, (data[0], unidade, nota))
                 db.commit()
-                if first_usage is False:
+
+                if data[5] is 0:
                     notifier.definitive(unidade, nota)
+
             except DatabaseError as e:
                 db.rollback()
                 print(e)

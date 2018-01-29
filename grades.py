@@ -50,17 +50,20 @@ class Analisys (threading.Thread):
             provisional(self.db, self.user, self.driver)
             self.driver.quit()
 
+        if self.user[5]:
+            remove_first_push_flag(self.db, self.user[0])
+
         self.db.close()
         semaphore.release()
 
 def verify_user(db, number, email):
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM users WHERE email='%s'" , (email))
+    cursor.execute("SELECT * FROM users WHERE email=%s" , (email))
     users = cursor.fetchall()
     if len(users) > 0:
         return False
 
-    cursor.execute("SELECT * FROM users WHERE number='%s'" , (number))
+    cursor.execute("SELECT * FROM users WHERE number=%s" , (number))
     users = cursor.fetchall()
     if len(users) > 0:
         return False
@@ -69,7 +72,7 @@ def verify_user(db, number, email):
 
 def add_user(db, number, password, password_cipher, email, url):
     cursor = db.cursor()
-    sql = "INSERT INTO users (number, password, email) VALUES (%s, %s, %s)"
+    sql = "INSERT INTO users (number, password, email, first_push) VALUES (%s, %s, %s, %s)"
 
     if verify_user(db, number, email) is False:
         return False
@@ -78,13 +81,26 @@ def add_user(db, number, password, password_cipher, email, url):
         return False
 
     try:
-        cursor.execute(sql, (number, str(password_cipher), email))
+        cursor.execute(sql, (number, str(password_cipher), email, 1))
         db.commit()
     except DatabaseError as e:
         db.rollback()
         print(e)
 
     return True
+
+def remove_first_push_flag(db, id):
+    query = ("UPDATE users SET first_push=%s WHERE id=%s")
+    try:
+    # Execute the SQL command
+        cursor = db.cursor()
+        cursor.execute(query, (0, id))
+    # Commit your changes in the database
+        db.commit()
+    except DatabaseError as e:
+    # Rollback in case there is any error
+        db.rollback()
+        print(e)
 
 if __name__ == "__main__":
     basepath = path.dirname(__file__)

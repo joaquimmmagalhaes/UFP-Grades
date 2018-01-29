@@ -39,10 +39,6 @@ def partial(db, url, data, password):
     cursor.execute("SELECT * FROM partial_grades WHERE user_id=%s", (str(data[0])))
     all_db_grades = cursor.fetchall()
 
-    first_usage = False
-    if (len(all_db_grades) == 0):
-        first_usage = True
-
     notifier = Notification(data[4])
 
     for grade in all_grades:
@@ -52,8 +48,10 @@ def partial(db, url, data, password):
                 try:
                     cursor.execute(sql, (data[0] ,details["unidade"], details["elemento"], details["nota"]))
                     db.commit()
-                    if first_usage is False:
+
+                    if data[5] is 0:
                         notifier.partial(details["unidade"], details["elemento"], details["nota"])
+
                 except DatabaseError as e:
                     db.rollback()
                     print(e)

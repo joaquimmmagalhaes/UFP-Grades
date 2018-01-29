@@ -1,10 +1,6 @@
-from selenium import webdriver
-from selenium.webdriver.support import ui
-from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException
 from clients.notifications import Notification
 from helpers import wait_until_page_is_loaded
-import pymysql
+from pymysql import DatabaseError
 
 def exists(unidade, epoca, ex_oral, ex_escrito, nota, consula, data_oral, all_grades):
     for grade in all_grades:
@@ -14,7 +10,7 @@ def exists(unidade, epoca, ex_oral, ex_escrito, nota, consula, data_oral, all_gr
 
 def provisional(db, data, driver):
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM provisional WHERE user_id=" + str(data[0]))
+    cursor.execute("SELECT * FROM provisional WHERE user_id=%s", (str(data[0])))
     all_db_grades = cursor.fetchall()
 
     first_usage = False
@@ -40,14 +36,15 @@ def provisional(db, data, driver):
 
         if exists(unidade, epoca, ex_oral, ex_escrito, nota, consula, data_oral, all_db_grades) is False:
             sql = "INSERT INTO provisional (user_id, unidade, epoca, ex_oral, ex_escrito, nota, consula, data_oral) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-            
+
             try:
                 cursor.execute(sql, (data[0], unidade, epoca, ex_oral, ex_escrito, nota, consula, data_oral))
                 db.commit()
                 if first_usage is False:
                     notifier.provisional(unidade, epoca, ex_oral, ex_escrito, nota, consula, data_oral)
-            except:                
+            except DatabaseError as e:
                 db.rollback()
+                print(e)
 
     driver.quit()
     

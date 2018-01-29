@@ -37,10 +37,10 @@ class Analisys (threading.Thread):
 
         if self.driver.current_url == "https://portal.ufp.pt/default.aspx":
             return True
-        
+
         self.driver.quit()
         return False
-        
+
     def run(self):
         semaphore.acquire()
         partial(self.db, self.url, self.user, self.password)
@@ -49,18 +49,18 @@ class Analisys (threading.Thread):
             definitive(self.db, self.user, self.driver)
             provisional(self.db, self.user, self.driver)
             self.driver.quit()
-        
+
         self.db.close()
         semaphore.release()
 
 def verify_user(db, number, email):
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM users WHERE email='" + email + "'")
+    cursor.execute("SELECT * FROM users WHERE email='%s'" , (email))
     users = cursor.fetchall()
     if len(users) > 0:
         return False
 
-    cursor.execute("SELECT * FROM users WHERE number='" + number + "'")
+    cursor.execute("SELECT * FROM users WHERE number='%s'" , (number))
     users = cursor.fetchall()
     if len(users) > 0:
         return False
@@ -69,7 +69,7 @@ def verify_user(db, number, email):
 
 def add_user(db, number, password, password_cipher, email, url):
     cursor = db.cursor()
-    sql = "INSERT INTO users (number, password, email) VALUES ('" + number + "', '" + str(password_cipher) + "', '" + email + "')"
+    sql = "INSERT INTO users (number, password, email) VALUES (%s, %s, %s)"
 
     if verify_user(db, number, email) is False:
         return False
@@ -78,10 +78,11 @@ def add_user(db, number, password, password_cipher, email, url):
         return False
 
     try:
-        cursor.execute(sql)
+        cursor.execute(sql, (number, str(password_cipher), email))
         db.commit()
-    except:                
+    except DatabaseError as e:
         db.rollback()
+        print(e)
 
     return True
 
@@ -89,11 +90,11 @@ if __name__ == "__main__":
     basepath = path.dirname(__file__)
     filepath = path.abspath(path.join(basepath, ".config.yml"))
     with open(filepath, 'r') as ymlfile:
-        cfg = yaml.load(ymlfile)
+        cfg = yaml.safe_load(ymlfile)
 
     cipher = AESCipher(cfg['others']['key'])
     url = cfg['others']['api']
-    
+
     try:
         db = pymysql.connect(cfg['mysql']['host'], cfg['mysql']['user'], cfg['mysql']['password'], cfg['mysql']['db'])
     except DatabaseError as e:
@@ -125,18 +126,18 @@ if __name__ == "__main__":
         else:
             print("Usage: -a or --add <number> <password> <email>")
             sys.exit(0)
-    
+
     cursor = db.cursor()
     cursor.execute("SELECT * FROM users")
     users = cursor.fetchall()
     db.close()
     threads = []
-    
+
     for user in users:
         password = cipher.decrypt(user[2].encode('UTF-8'))
         analisys = Analisys(db, url, user, password, cfg)
         threads.append(analisys)
         analisys.start()
-    
+
     for thread in threads:
         thread.join()

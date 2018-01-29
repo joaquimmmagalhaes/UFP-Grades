@@ -1,5 +1,5 @@
 import requests, json, pymysql
-from pprint import pprint
+from pymysql import DatabaseError
 
 def wait_until_page_is_loaded(driver):
     while (driver.execute_script('return document.readyState;') != "complete"):
@@ -7,7 +7,7 @@ def wait_until_page_is_loaded(driver):
 
 def login_test(username, password, url):
     login = requests.post(url + "login", json={"username": username, "password": password})
-    
+
     if login.json()["status"]  != "Error":
         return True
 
@@ -19,16 +19,17 @@ def login(username, password, db, data, url):
     if login.json()["status"]  != "Error":
         token = login.json()["message"]
         token_json = {"token": token}
-        query = ("UPDATE users SET token='" + json.dumps(token_json) + "' WHERE id=" + str(data[0]))
+        query = ("UPDATE users SET token=%s WHERE id=%s")
         try:
         # Execute the SQL command
             cursor = db.cursor()
-            cursor.execute(query)
+            cursor.execute(query, (json.dumps(token_json), str(data[0])))
         # Commit your changes in the database
             db.commit()
-        except:
+        except DatabaseError as e:
         # Rollback in case there is any error
             db.rollback()
+            print(e)
     else:
         return False
 

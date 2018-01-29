@@ -1,14 +1,11 @@
-from pymysql import DatabaseError
-import pymysql, sys, yaml
-
 def create_database(db, cfg, cipher):
     print("Creating database and tables...")
-    
+
     cursor = db.cursor()
     sql = 'CREATE DATABASE ' + cfg['mysql']['db']
     cursor.execute(sql)
     cursor.execute('USE ' + cfg['mysql']['db'])
-    
+
     cursor.execute("""CREATE TABLE IF NOT EXISTS users(
     id INT PRIMARY KEY AUTO_INCREMENT,
     number TEXT,

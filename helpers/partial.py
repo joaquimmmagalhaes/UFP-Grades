@@ -1,7 +1,7 @@
-import requests, json, sys, pymysql
+import requests, sys
 from helpers import login
 from clients.notifications import Notification
-from pprint import pprint
+from pymysql import DatabaseError
 
 def exists(unidade, elemento, nota, all_grades):
     for grade in all_grades:
@@ -31,12 +31,12 @@ def partial(db, url, data, password):
         if token_json == False:
             print("Unable to login. Check username and password")
             sys.exit(1)
-        
+
         grades = requests.get(url + "grades/detailed", token_json)
-    
+
     all_grades = grades.json()["message"]["2017/18"]
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM partial_grades WHERE user_id=" + str(data[0]))
+    cursor.execute("SELECT * FROM partial_grades WHERE user_id=%s", (str(data[0])))
     all_db_grades = cursor.fetchall()
 
     first_usage = False
@@ -54,5 +54,6 @@ def partial(db, url, data, password):
                     db.commit()
                     if first_usage is False:
                         notifier.partial(details["unidade"], details["elemento"], details["nota"])
-                except:
+                except DatabaseError as e:
                     db.rollback()
+                    print(e)

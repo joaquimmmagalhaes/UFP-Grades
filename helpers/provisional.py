@@ -1,7 +1,5 @@
-from selenium import webdriver
 from selenium.webdriver.support import ui
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException
 from clients.notifications import Notification
 from helpers import wait_until_page_is_loaded
 import pymysql
@@ -14,7 +12,7 @@ def exists(unidade, epoca, ex_oral, ex_escrito, nota, consula, data_oral, all_gr
 
 def provisional(db, data, driver):
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM provisional WHERE user_id=" + str(data[0]))
+    cursor.execute("SELECT * FROM provisional WHERE user_id=%s", (str(data[0])))
     all_db_grades = cursor.fetchall()
 
     first_usage = False

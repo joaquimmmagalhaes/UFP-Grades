@@ -2,7 +2,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.header import Header
 from smtplib import SMTPException
-import smtplib, sys, yaml
+import smtplib, yaml
 from os import path
 
 
@@ -38,7 +38,7 @@ class Notification:
         basepath = path.dirname(__file__)
         filepath = path.abspath(path.join(basepath, "..", ".config.yml"))
         with open(filepath, 'r') as ymlfile:
-            cfg = yaml.load(ymlfile)
+            cfg = yaml.safe_load(ymlfile)
 
         msg = MIMEMultipart('alternative')
         msg['Subject'] = subject

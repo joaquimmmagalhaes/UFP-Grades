@@ -1,7 +1,6 @@
 import requests, json, sys, pymysql
 from helpers import login
 from clients.notifications import Notification
-from pprint import pprint
 
 def exists(unidade, elemento, nota, all_grades):
     for grade in all_grades:
@@ -36,7 +35,7 @@ def partial(db, url, data, password):
     
     all_grades = grades.json()["message"]["2017/18"]
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM partial_grades WHERE user_id=" + str(data[0]))
+    cursor.execute("SELECT * FROM partial_grades WHERE user_id=%s", (str(data[0])))
     all_db_grades = cursor.fetchall()
 
     first_usage = False

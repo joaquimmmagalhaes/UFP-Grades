@@ -55,12 +55,12 @@ class Analisys (threading.Thread):
 
 def verify_user(db, number, email):
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM users WHERE email='" + email + "'")
+    cursor.execute("SELECT * FROM users WHERE email='%s'" , (email))
     users = cursor.fetchall()
     if len(users) > 0:
         return False
-
-    cursor.execute("SELECT * FROM users WHERE number='" + number + "'")
+    
+    cursor.execute("SELECT * FROM users WHERE number='%s'" , (number))
     users = cursor.fetchall()
     if len(users) > 0:
         return False
@@ -69,7 +69,7 @@ def verify_user(db, number, email):
 
 def add_user(db, number, password, password_cipher, email, url):
     cursor = db.cursor()
-    sql = "INSERT INTO users (number, password, email) VALUES ('" + number + "', '" + str(password_cipher) + "', '" + email + "')"
+    sql = "INSERT INTO users (number, password, email) VALUES (%s, %s, %s)"
 
     if verify_user(db, number, email) is False:
         return False
@@ -78,7 +78,7 @@ def add_user(db, number, password, password_cipher, email, url):
         return False
 
     try:
-        cursor.execute(sql)
+        cursor.execute(sql, (number, str(password_cipher), email))
         db.commit()
     except:                
         db.rollback()
@@ -89,7 +89,7 @@ if __name__ == "__main__":
     basepath = path.dirname(__file__)
     filepath = path.abspath(path.join(basepath, ".config.yml"))
     with open(filepath, 'r') as ymlfile:
-        cfg = yaml.load(ymlfile)
+        cfg = yaml.safe_load(ymlfile)
 
     cipher = AESCipher(cfg['others']['key'])
     url = cfg['others']['api']

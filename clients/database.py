@@ -1,4 +1,3 @@
-from pymysql import DatabaseError
 import pymysql, sys, yaml
 
 def create_database(db, cfg, cipher):

@@ -1,0 +1,15 @@
+mysql:
+    host: 
+    user: 
+    password: 
+    db: 
+
+others:
+      api: 
+      key: 
+
+stmp:
+    server: 
+    username: 
+    password: 
+    port: 

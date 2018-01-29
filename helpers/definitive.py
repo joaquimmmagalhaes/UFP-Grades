@@ -26,7 +26,7 @@ def definitive(db, data, driver):
         return
 
     del table[0]
-    
+
     notifier = Notification(data[4])
 
     for row in table:
@@ -36,7 +36,7 @@ def definitive(db, data, driver):
 
         if exists(unidade, nota, all_db_grades) is False:
             sql = "INSERT INTO recent_definitive (user_id, unidade, nota) VALUES (%s, %s, %s)"
-            
+
             try:
                 cursor.execute(sql, (data[0], unidade, nota))
                 db.commit()

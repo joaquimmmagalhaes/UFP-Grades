@@ -5,7 +5,7 @@ def create_database(db, cfg, cipher):
     sql = 'CREATE DATABASE ' + cfg['mysql']['db']
     cursor.execute(sql)
     cursor.execute('USE ' + cfg['mysql']['db'])
-    
+
     cursor.execute("""CREATE TABLE IF NOT EXISTS users(
     id INT PRIMARY KEY AUTO_INCREMENT,
     number TEXT,

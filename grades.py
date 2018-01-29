@@ -49,7 +49,7 @@ class Analisys (threading.Thread):
             definitive(self.db, self.user, self.driver)
             provisional(self.db, self.user, self.driver)
             self.driver.quit()
-        
+
         self.db.close()
         semaphore.release()
 
@@ -59,7 +59,7 @@ def verify_user(db, number, email):
     users = cursor.fetchall()
     if len(users) > 0:
         return False
-    
+
     cursor.execute("SELECT * FROM users WHERE number='%s'" , (number))
     users = cursor.fetchall()
     if len(users) > 0:
@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
     cipher = AESCipher(cfg['others']['key'])
     url = cfg['others']['api']
-    
+
     try:
         db = pymysql.connect(cfg['mysql']['host'], cfg['mysql']['user'], cfg['mysql']['password'], cfg['mysql']['db'])
     except DatabaseError as e:
@@ -126,18 +126,18 @@ if __name__ == "__main__":
         else:
             print("Usage: -a or --add <number> <password> <email>")
             sys.exit(0)
-    
+
     cursor = db.cursor()
     cursor.execute("SELECT * FROM users")
     users = cursor.fetchall()
     db.close()
     threads = []
-    
+
     for user in users:
         password = cipher.decrypt(user[2].encode('UTF-8'))
         analisys = Analisys(db, url, user, password, cfg)
         threads.append(analisys)
         analisys.start()
-    
+
     for thread in threads:
         thread.join()

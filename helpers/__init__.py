@@ -1,5 +1,5 @@
 import requests, json, pymysql
-from pprint import pprint
+from pymysql import DatabaseError
 
 def wait_until_page_is_loaded(driver):
     while (driver.execute_script('return document.readyState;') != "complete"):
@@ -26,9 +26,10 @@ def login(username, password, db, data, url):
             cursor.execute(query, (json.dumps(token_json), str(data[0])))
         # Commit your changes in the database
             db.commit()
-        except:
+        except DatabaseError as e:
         # Rollback in case there is any error
             db.rollback()
+            print(e)
     else:
         return False
 

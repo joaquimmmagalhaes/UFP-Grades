@@ -37,7 +37,7 @@ class Analisys (threading.Thread):
 
         if self.driver.current_url == "https://portal.ufp.pt/default.aspx":
             return True
-        
+
         self.driver.quit()
         return False
         

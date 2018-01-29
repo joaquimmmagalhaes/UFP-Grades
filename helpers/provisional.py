@@ -1,8 +1,7 @@
-from selenium.webdriver.support import ui
 from selenium.webdriver.common.keys import Keys
 from clients.notifications import Notification
 from helpers import wait_until_page_is_loaded
-import pymysql
+from pymysql import DatabaseError
 
 def exists(unidade, epoca, ex_oral, ex_escrito, nota, consula, data_oral, all_grades):
     for grade in all_grades:
@@ -38,14 +37,15 @@ def provisional(db, data, driver):
 
         if exists(unidade, epoca, ex_oral, ex_escrito, nota, consula, data_oral, all_db_grades) is False:
             sql = "INSERT INTO provisional (user_id, unidade, epoca, ex_oral, ex_escrito, nota, consula, data_oral) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-            
+
             try:
                 cursor.execute(sql, (data[0], unidade, epoca, ex_oral, ex_escrito, nota, consula, data_oral))
                 db.commit()
                 if first_usage is False:
                     notifier.provisional(unidade, epoca, ex_oral, ex_escrito, nota, consula, data_oral)
-            except:                
+            except DatabaseError as e:
                 db.rollback()
+                print(e)
 
     driver.quit()
     

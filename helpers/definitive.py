@@ -1,9 +1,7 @@
-from selenium import webdriver
 from selenium.webdriver.support import ui
-from selenium.webdriver.common.keys import Keys
 from clients.notifications import Notification
 from helpers import wait_until_page_is_loaded
-import pymysql
+from pymysql import DatabaseError
 
 def exists(unidade, nota, all_grades):
     for grade in all_grades:
@@ -31,7 +29,7 @@ def definitive(db, data, driver):
     del table[0]
     
     notifier = Notification(data[4])
-    
+
     for row in table:
         col = row.find_elements_by_tag_name("td")
         unidade = col[0].get_attribute('innerText')
@@ -45,5 +43,5 @@ def definitive(db, data, driver):
                 db.commit()
                 if first_usage is False:
                     notifier.definitive(unidade, nota)
-            except:                
+            except DatabaseError as e:
                 db.rollback()

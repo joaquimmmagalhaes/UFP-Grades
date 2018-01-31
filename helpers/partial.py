@@ -39,7 +39,7 @@ def partial(db, url, data, password):
     cursor.execute("SELECT * FROM partial_grades WHERE user_id=%s", (str(data[0])))
     all_db_grades = cursor.fetchall()
 
-    notifier = Notification(data[4])
+    notifier = Notification(data[4], data[6])
 
     for grade in all_grades:
         for details in all_grades[grade]:

@@ -11,7 +11,9 @@ def create_database(db, cfg, cipher):
     number TEXT,
     password TEXT,
     token TEXT,
-    email TEXT)""")
+    email TEXT,
+    first_usage INT,
+    contact TEXT)""")
     db.commit()
 
     cursor.execute("""CREATE TABLE IF NOT EXISTS recent_definitive(

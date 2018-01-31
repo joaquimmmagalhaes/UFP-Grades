@@ -23,7 +23,7 @@ def definitive(db, data, driver):
 
     del table[0]
 
-    notifier = Notification(data[4])
+    notifier = Notification(data[4], data[6])
 
     for row in table:
         col = row.find_elements_by_tag_name("td")

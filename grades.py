@@ -15,6 +15,8 @@ from os import path
 from clients.database import create_database
 
 semaphore = threading.Semaphore(value=5)
+use_sms_notifications = False
+use_pushbullet_notifications = False
 
 class Analisys (threading.Thread):
     def __init__(self, db, url, user, password, cfg):
@@ -72,7 +74,7 @@ def verify_user(db, number, email):
 
 def add_user(db, number, password, password_cipher, email, url):
     cursor = db.cursor()
-    sql = "INSERT INTO users (number, password, email, first_push) VALUES (%s, %s, %s, %s)"
+    sql = "INSERT INTO users (number, password, email, first_usage) VALUES (%s, %s, %s, %s)"
 
     if verify_user(db, number, email) is False:
         return False
@@ -90,7 +92,7 @@ def add_user(db, number, password, password_cipher, email, url):
     return True
 
 def remove_first_push_flag(db, id):
-    query = ("UPDATE users SET first_push=%s WHERE id=%s")
+    query = ("UPDATE users SET first_usage=%s WHERE id=%s")
     try:
     # Execute the SQL command
         cursor = db.cursor()
@@ -154,6 +156,7 @@ if __name__ == "__main__":
         analisys = Analisys(db, url, user, password, cfg)
         threads.append(analisys)
         analisys.start()
+        print(password)
 
     for thread in threads:
         thread.join()

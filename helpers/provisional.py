@@ -18,7 +18,7 @@ def provisional(db, data, driver):
 
     table = driver.find_elements_by_xpath("//*[@id='ctl00_ContentPlaceHolder1_AccordionPane1_content']/table/tbody/tr[contains(@class, 'odd') or contains(@class, 'even')]")
 
-    notifier = Notification(data[4])
+    notifier = Notification(data[4], data[6])
 
     for row in table:
         col = row.find_elements_by_tag_name("td")

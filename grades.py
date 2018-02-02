@@ -15,8 +15,6 @@ from os import path
 from clients.database import create_database
 
 semaphore = threading.Semaphore(value=5)
-use_sms_notifications = False
-use_pushbullet_notifications = False
 
 class Analisys (threading.Thread):
     def __init__(self, db, url, user, password, cfg):
@@ -156,7 +154,6 @@ if __name__ == "__main__":
         analisys = Analisys(db, url, user, password, cfg)
         threads.append(analisys)
         analisys.start()
-        print(password)
 
     for thread in threads:
         thread.join()

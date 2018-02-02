@@ -13,7 +13,7 @@ UFP-Grades is a system to auto-notify new grades available for Fernando Pessoa U
 
 ### Installation
 
-UFP-Grades requires [Python](https://www.python.org/) v3+ and [MySQL](https://www.mysql.com) to run.
+UFP-Grades requires [Python](https://www.python.org/) v3+, [MySQL](https://www.mysql.com) and [PhantomJS](http://phantomjs.org) to run.
 
 
 ### Usage

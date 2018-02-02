@@ -1,6 +1,6 @@
 # UFP-Grades
 
-UFP-Grades is a system to auto-notify new grades avaiable for Fernando Pessoa University.
+UFP-Grades is a system to auto-notify new grades available for Fernando Pessoa University.
 
 # Features!
 

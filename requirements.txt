@@ -1,0 +1,7 @@
+selenium==3.8.0
+pystache==0.5.4
+requests==2.18.4
+pushbullet.py==0.11.0
+PyMySQL==0.7.11
+pycrypto==2.6.1
+PyYAML==3.12

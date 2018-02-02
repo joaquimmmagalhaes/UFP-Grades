@@ -24,6 +24,7 @@ $ cd UFP-Grades
 $ cp .config.yml.example .config.yml
 $ nano .config.yml 
 Fill the yaml file with your configurations
+$ pip3 install -r requirements.txt
 $ python3 grades.py
 Or
 $ python3 grades.py -a <number> <password> <email>
@@ -32,7 +33,7 @@ $ python3 grades.py -a <number> <password> <email>
 # This system also requires [UFP-API](https://github.com/rafaelcpalmeida/UFP-API)
 
 ### Todos
- - Create a requirements file with all dependencies
+ - Document code
 
 ### Special thanks to:
 - [Rafael Almeida](https://github.com/rafaelcpalmeida) for creating the API
